@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Website Audit Tool - Digital Vint</title>
+    <meta name="description" content="Get a free AI-powered audit of your website. Analyze SEO, speed, mobile-friendliness and get actionable recommendations.">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h2>🚀 Digital Vint</h2>
+            </div>
+            <nav>
+                <a href="https://digitalvint.com" class="btn-secondary">Back to Main Site</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    Is Your Website <span class="gradient-text">Losing Customers?</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Get a FREE AI-powered audit in 60 seconds. Discover what's holding your website back from ranking higher and converting better.
+                </p>
+                
+                <!-- Audit Form -->
+                <div class="audit-form-card">
+                    <form id="auditForm" class="audit-form">
+                        <div class="form-group">
+                            <input 
+                                type="url" 
+                                id="websiteUrl" 
+                                placeholder="Enter your website URL (e.g., https://example.com)" 
+                                required
+                                class="input-field"
+                            >
+                        </div>
+                        <div class="form-group">
+                            <input 
+                                type="email" 
+                                id="email" 
+                                placeholder="Your email (we'll send detailed report)" 
+                                required
+                                class="input-field"
+                            >
+                        </div>
+                        <div class="form-group">
+                            <input 
+                                type="text" 
+                                id="name" 
+                                placeholder="Your name (optional)" 
+                                class="input-field"
+                            >
+                        </div>
+                        <button type="submit" class="btn-primary" id="analyzeBtn">
+                            <span class="btn-text">Analyze My Website FREE</span>
+                            <span class="btn-loader" style="display: none;">
+                                <span class="spinner"></span> Analyzing...
+                            </span>
+                        </button>
+                    </form>
+                    
+                    <p class="form-note">
+                        ⚡ <strong>100% Free</strong> • No Credit Card • Results in 60 seconds
+                    </p>
+                </div>
+
+                <!-- Trust Badges -->
+                <div class="trust-badges">
+                    <div class="badge">
+                        <span class="badge-icon">✓</span>
+                        <span>Trusted by 200+ brands</span>
+                    </div>
+                    <div class="badge">
+                        <span class="badge-icon">⚡</span>
+                        <span>AI-Powered Analysis</span>
+                    </div>
+                    <div class="badge">
+                        <span class="badge-icon">🔒</span>
+                        <span>Secure & Private</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">What You'll Get</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>SEO Score</h3>
+                    <p>Comprehensive SEO analysis with actionable fixes to rank higher on Google</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Speed Test</h3>
+                    <p>Page load speed analysis with specific recommendations to make your site faster</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Mobile Check</h3>
+                    <p>Mobile-friendliness score and fixes to improve mobile user experience</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI Insights</h3>
+                    <p>AI-powered recommendations customized for your industry and audience</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Technical Audit</h3>
+                    <p>Identify technical issues affecting your website performance</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Detailed Report</h3>
+                    <p>Easy-to-understand report with priority action items</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Enter URL</h3>
+                    <p>Simply paste your website URL</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>AI Analysis</h3>
+                    <p>Our AI scans 50+ factors in 60 seconds</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Get Report</h3>
+                    <p>Receive detailed recommendations</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Take Action</h3>
+                    <p>Implement fixes or hire us to do it</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Ready to Improve Your Website?</h2>
+            <p>Join 500+ businesses who discovered what's holding them back</p>
+            <a href="#auditForm" class="btn-primary btn-large">Get Your Free Audit Now</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Digital Vint. All rights reserved.</p>
+            <p>
+                <a href="https://digitalvint.com">Main Website</a> • 
+                <a href="mailto:contact@digitalvint.com">Contact</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
