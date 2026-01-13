@@ -5,6 +5,13 @@
 }
 
 :root {
+    --primary-color: #2563eb;  /* Change to your brand color */
+    --secondary-color: #10b981;
+    /* ... */
+}
+
+
+:root {
     --primary-color: #2563eb;
     --primary-dark: #1e40af;
     --secondary-color: #10b981;
