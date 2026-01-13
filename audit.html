@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Results - Digital Vint</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h2>🚀 Digital Vint</h2>
+            </div>
+            <nav>
+                <a href="index.html" class="btn-secondary">New Audit</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Results Section -->
+    <section class="results-section">
+        <div class="container">
+            <div id="resultsContainer" class="results-container">
+                <!-- Results will be dynamically inserted here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Digital Vint. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Display results from localStorage
+        window.addEventListener('DOMContentLoaded', () => {
+            const results = JSON.parse(localStorage.getItem('auditResults'));
+            if (!results) {
+                window.location.href = 'index.html';
+                return;
+            }
+            displayResults(results);
+        });
+
+        function displayResults(data) {
+            const container = document.getElementById('resultsContainer');
+            
+            const html = `
+                <div class="results-header">
+                    <h1>Your Website Audit Results</h1>
+                    <p class="analyzed-url">${data.url}</p>
+                </div>
+
+                <div class="overall-score">
+                    <div class="score-circle ${getScoreClass(data.overallScore)}">
+                        <span class="score-number">${data.overallScore}</span>
+                        <span class="score-label">/100</span>
+                    </div>
+                    <div class="score-description">
+                        <h2>${getScoreText(data.overallScore)}</h2>
+                        <p>${getScoreMessage(data.overallScore)}</p>
+                    </div>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <h3>⚡ Performance</h3>
+                        <div class="metric-score ${getScoreClass(data.performance)}">
+                            ${data.performance}/100
+                        </div>
+                        <p>${getMetricMessage('performance', data.performance)}</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>🎯 SEO</h3>
+                        <div class="metric-score ${getScoreClass(data.seo)}">
+                            ${data.seo}/100
+                        </div>
+                        <p>${getMetricMessage('seo', data.seo)}</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>📱 Mobile</h3>
+                        <div class="metric-score ${getScoreClass(data.mobile)}">
+                            ${data.mobile}/100
+                        </div>
+                        <p>${getMetricMessage('mobile', data.mobile)}</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>♿ Accessibility</h3>
+                        <div class="metric-score ${getScoreClass(data.accessibility)}">
+                            ${data.accessibility}/100
+                        </div>
+                        <p>${getMetricMessage('accessibility', data.accessibility)}</p>
+                    </div>
+                </div>
+
+                <div class="recommendations-section">
+                    <h2>🚀 AI-Powered Recommendations</h2>
+                    <div class="recommendations-list">
+                        ${data.recommendations.map((rec, index) => `
+                            <div class="recommendation-card">
+                                <div class="recommendation-header">
+                                    <span class="recommendation-number">${index + 1}</span>
+                                    <h3>${rec.title}</h3>
+                                    <span class="priority-badge priority-${rec.priority.toLowerCase()}">
+                                        ${rec.priority}
+                                    </span>
+                                </div>
+                                <p class="recommendation-description">${rec.description}</p>
+                                <div class="recommendation-impact">
+                                    <strong>Expected Impact:</strong> ${rec.impact}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="cta-box">
+                    <h2>Need Help Fixing These Issues?</h2>
+                    <p>Our team at Digital Vint can implement all these recommendations for you.</p>
+                    <div class="cta-buttons">
+                        <a href="https://digitalvint.com" class="btn-primary">Get Professional Help</a>
+                        <a href="index.html" class="btn-secondary">Analyze Another Website</a>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        function getScoreClass(score) {
+            if (score >= 90) return 'score-excellent';
+            if (score >= 70) return 'score-good';
+            if (score >= 50) return 'score-fair';
+            return 'score-poor';
+        }
+
+        function getScoreText(score) {
+            if (score >= 90) return '🎉 Excellent!';
+            if (score >= 70) return '👍 Good';
+            if (score >= 50) return '⚠️ Needs Improvement';
+            return '❌ Critical Issues';
+        }
+
+        function getScoreMessage(score) {
+            if (score >= 90) return 'Your website is in great shape! Minor optimizations can make it even better.';
+            if (score >= 70) return 'Your website is performing well, but there\'s room for improvement.';
+            if (score >= 50) return 'Your website has several issues that need attention.';
+            return 'Your website has critical issues affecting performance and user experience.';
+        }
+
+        function getMetricMessage(metric, score) {
+            const messages = {
+                performance: {
+                    high: 'Fast loading speed',
+                    medium: 'Could be faster',
+                    low: 'Slow loading times'
+                },
+                seo: {
+                    high: 'Well optimized',
+                    medium: 'Missing key elements',
+                    low: 'Poor SEO setup'
+                },
+                mobile: {
+                    high: 'Mobile-friendly',
+                    medium: 'Some mobile issues',
+                    low: 'Not mobile-optimized'
+                },
+                accessibility: {
+                    high: 'Accessible to all',
+                    medium: 'Accessibility gaps',
+                    low: 'Major accessibility issues'
+                }
+            };
+            
+            const level = score >= 70 ? 'high' : score >= 50 ? 'medium' : 'low';
+            return messages[metric][level];
+        }
+    </script>
+</body>
+</html>
