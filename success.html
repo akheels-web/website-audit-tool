@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Success - Digital Vint</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h2>🚀 Digital Vint</h2>
+            </div>
+        </div>
+    </header>
+
+    <section class="success-section">
+        <div class="container">
+            <div class="success-card">
+                <div class="success-icon">✅</div>
+                <h1>Payment Successful!</h1>
+                <p>Thank you for your purchase. Your detailed website audit report is being generated.</p>
+                
+                <div id="reportStatus" class="report-status">
+                    <div class="spinner"></div>
+                    <p>Generating your detailed report...</p>
+                </div>
+
+                <div id="downloadSection" style="display: none;">
+                    <a href="#" id="downloadBtn" class="btn-primary btn-large">
+                        Download Full Report (PDF)
+                    </a>
+                    <p class="note">Report also sent to your email</p>
+                </div>
+
+                <div class="next-steps">
+                    <h3>What's Next?</h3>
+                    <ul>
+                        <li>✅ Check your email for the detailed report</li>
+                        <li>✅ Review all recommendations</li>
+                        <li>✅ Schedule a free consultation with our team</li>
+                    </ul>
+                    <a href="https://digitalvint.com" class="btn-secondary">
+                        Talk to Our Experts
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Get session ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+
+        if (sessionId) {
+            // Generate PDF report
+            fetch('/api/generate-pdf', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sessionId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('reportStatus').style.display = 'none';
+                document.getElementById('downloadSection').style.display = 'block';
+                document.getElementById('downloadBtn').href = data.downloadUrl;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('reportStatus').innerHTML = 
+                    '<p style="color: red;">Error generating report. Please contact support.</p>';
+            });
+        }
+    </script>
+</body>
+</html>
