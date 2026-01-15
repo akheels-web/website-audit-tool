@@ -5,7 +5,7 @@
   "main": "index.html",
   "scripts": {
     "dev": "vercel dev",
-    "build": "echo 'No build needed'"
+    "build": "echo 'Static site - no build needed'"
   },
   "dependencies": {
     "@google/generative-ai": "^0.1.3",
