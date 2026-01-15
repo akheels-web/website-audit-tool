@@ -77,3 +77,46 @@ function isValidUrl(string) {
         return false;
     }
 }
+// Payment handler for unlock button
+if (document.getElementById('unlockReportBtn')) {
+    document.getElementById('unlockReportBtn').addEventListener('click', async function() {
+        const results = JSON.parse(localStorage.getItem('auditResults'));
+        
+        if (!results) {
+            alert('Session expired. Please run audit again.');
+            window.location.href = 'index.html';
+            return;
+        }
+
+        const button = this;
+        button.disabled = true;
+        button.innerHTML = '<span class="spinner"></span> Redirecting to payment...';
+
+        try {
+            const response = await fetch('/api/create-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: results.email,
+                    url: results.url,
+                    amount: 499 // ₹499
+                })
+            });
+
+            const data = await response.json();
+            
+            if (data.url) {
+                // Redirect to Stripe Checkout
+                window.location.href = data.url;
+            } else {
+                throw new Error('Payment session creation failed');
+            }
+
+        } catch (error) {
+            console.error('Payment error:', error);
+            alert('Payment failed. Please try again or contact support.');
+            button.disabled = false;
+            button.innerHTML = '🔓 Unlock Full Report Now';
+        }
+    });
+}
