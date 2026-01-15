@@ -108,7 +108,7 @@ async function getPageSpeedData(url) {
         };
 
     } catch (err) {
-        console.error("PageSpeed API error:", err.message);
+        console.error("PageSpeed API error:", err.response?.data || err.message);
 
         return {
             overallScore: 50,
@@ -126,6 +126,9 @@ async function generateAIRecommendations(url, pageSpeedData) {
     try {
         const apiKey = process.env.GEMINI_API_KEY;
 
+        const apiUrl =
+            "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent";
+
         const prompt = `
 Analyze this website and give 6 actionable recommendations.
 
@@ -135,16 +138,21 @@ SEO: ${pageSpeedData.seo}
 Mobile: ${pageSpeedData.mobile}
 Accessibility: ${pageSpeedData.accessibility}
 
-Return ONLY valid JSON array:
+Return ONLY valid JSON:
 [
  { "title":"", "description":"", "priority":"High", "impact":"" }
 ]
 `;
 
         const response = await axios.post(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
+            `${apiUrl}?key=${apiKey}`,
             {
-                contents: [{ parts: [{ text: prompt }] }]
+                contents: [
+                    {
+                        role: "user",
+                        parts: [{ text: prompt }]
+                    }
+                ]
             },
             { timeout: 30000 }
         );
@@ -154,12 +162,14 @@ Return ONLY valid JSON array:
 
         const jsonMatch = text.match(/\[[\s\S]*\]/);
 
-        if (!jsonMatch) throw new Error("JSON parse failed");
+        if (!jsonMatch) {
+            throw new Error("Invalid AI response");
+        }
 
         return JSON.parse(jsonMatch[0]).slice(0, 6);
 
     } catch (err) {
-        console.error("Gemini error:", err.message);
+        console.error("Gemini error:", err.response?.data || err.message);
         return getFallbackRecommendations(pageSpeedData);
     }
 }
