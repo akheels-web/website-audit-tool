@@ -600,3 +600,185 @@ body {
         gap: 15px;
     }
 }
+/* Upgrade Section */
+.upgrade-section {
+    margin-bottom: 40px;
+}
+
+.upgrade-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 50px;
+    border-radius: 16px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.upgrade-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.upgrade-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.upgrade-card h2 {
+    font-size: 32px;
+    margin-bottom: 16px;
+}
+
+.premium-features {
+    max-width: 600px;
+    margin: 30px auto;
+    text-align: left;
+}
+
+.premium-feature {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.check-icon {
+    width: 24px;
+    height: 24px;
+    background: #10b981;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-weight: 700;
+}
+
+.pricing-box {
+    margin: 30px 0;
+}
+
+.price {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.price-currency {
+    font-size: 32px;
+    font-weight: 600;
+}
+
+.price-amount {
+    font-size: 64px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.price-original {
+    font-size: 24px;
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+.price-note {
+    background: #f59e0b;
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.payment-note {
+    margin-top: 20px;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+/* Success Page */
+.success-section {
+    padding: 80px 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.success-card {
+    background: var(--bg-white);
+    padding: 60px 40px;
+    border-radius: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+
+.success-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+}
+
+.success-card h1 {
+    font-size: 36px;
+    color: var(--success);
+    margin-bottom: 16px;
+}
+
+.report-status {
+    padding: 30px;
+    background: var(--bg-light);
+    border-radius: 12px;
+    margin: 30px 0;
+}
+
+.next-steps {
+    margin-top: 40px;
+    padding-top: 40px;
+    border-top: 2px solid var(--border-color);
+}
+
+.next-steps h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.next-steps ul {
+    list-style: none;
+    margin-bottom: 30px;
+}
+
+.next-steps li {
+    padding: 12px;
+    text-align: left;
+    font-size: 16px;
+}
+
+.note {
+    font-size: 14px;
+    color: var(--text-light);
+    margin-top: 10px;
+}
