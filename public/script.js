@@ -1,3 +1,13 @@
+// Wait for DOM to be ready
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('auditForm');
+    
+    if (form) {
+        form.addEventListener('submit', handleFormSubmit);
+    }
+});
+
+// Handle form submission
 async function handleFormSubmit(e) {
     e.preventDefault();
     
@@ -17,31 +27,61 @@ async function handleFormSubmit(e) {
     // Show loader
     btn.disabled = true;
     btnText.style.display = 'none';
-    btnLoader.style.display = 'flex';
-
+    btnLoader.style.display = 'inline-flex';
+    
     try {
+        console.log('Sending request to /api/analyze...');
+        
         const response = await fetch('/api/analyze', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url, email, name })
         });
         
+        console.log('Response status:', response.status);
+        
         if (!response.ok) {
-            throw new Error('Analysis failed');
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Analysis failed');
         }
         
         const results = await response.json();
+        console.log('Results received:', results);
+        
+        // Store results in localStorage
         localStorage.setItem('auditResults', JSON.stringify(results));
+        
+        // Redirect to results page
         window.location.href = 'audit.html';
         
     } catch (error) {
         console.error('Error:', error);
-        alert('Sorry, something went wrong. Please try again or contact support.');
+        alert('Sorry, something went wrong. Please try again.\n\nError: ' + error.message);
         
-    } finally {
-        // Reset button (always)
+        // Reset button
         btn.disabled = false;
         btnLoader.style.display = 'none';
-        btnText.style.display = 'flex';
+        btnText.style.display = 'inline-flex';
     }
 }
+
+// Validate URL format
+function isValidUrl(string) {
+    try {
+        const url = new URL(string);
+        return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch (_) {
+        return false;
+    }
+}
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+});
