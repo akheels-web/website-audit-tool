@@ -1,5 +1,7 @@
 const axios = require('axios');
 
+// Updated: 2026-01-17 - Using Gemini 2.5 Flash
+
 module.exports = async (req, res) => {
 
     /* ---------- CORS ---------- */
