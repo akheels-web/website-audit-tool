@@ -131,15 +131,16 @@ async function getPageSpeedData(url) {
     }
 }
 
-/* ================= GEMINI PRO (STABLE) ================= */
+/* ================= GEMINI 2.5 FLASH ================= */
 
 async function generateAIRecommendations(url, pageSpeedData) {
     try {
         const apiKey = process.env.GEMINI_API_KEY;
 
-        // Using stable Gemini Pro model
+        // Using Gemini 2.5 Flash - the current stable model
+        const model = "gemini-2.5-flash";
         const apiUrl =
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
         const prompt = `
 You are a website optimization expert. Analyze this website and provide 6 specific, actionable recommendations.
@@ -161,7 +162,7 @@ Return ONLY a valid JSON array with this exact format (no markdown, no code bloc
 Make sure each recommendation is specific to the scores provided.
 `;
 
-        console.log('Calling Gemini Pro API for recommendations...');
+        console.log('Calling Gemini 2.5 Flash API for recommendations...');
 
         const response = await axios.post(
             `${apiUrl}?key=${apiKey}`,
@@ -178,7 +179,7 @@ Make sure each recommendation is specific to the scores provided.
         const text =
             response.data.candidates[0].content.parts[0].text;
 
-        console.log('Gemini raw response:', text.substring(0, 200) + '...');
+        console.log('Gemini raw response received (length):', text.length);
 
         // Extract JSON from response (handles cases where AI adds markdown)
         const jsonMatch = text.match(/\[[\s\S]*\]/);
