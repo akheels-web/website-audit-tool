@@ -36,33 +36,63 @@ module.exports = async (req, res) => {
         const pageSpeedData = await getPageSpeedData(url);
 
         /* ---------- AI RECOMMENDATIONS ---------- */
-        const aiRecommendations = await generateAIRecommendations(
-            url,
-            pageSpeedData
+        /* ================= GEMINI (1.5 Flash) ================= */
+
+async function generateAIRecommendations(url, pageSpeedData) {
+    try {
+        const apiKey = process.env.GEMINI_API_KEY;
+
+        // Using Gemini 1.5 Flash with correct v1beta endpoint
+        const apiUrl =
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+
+        const prompt = `
+Analyze this website and give 6 actionable recommendations.
+
+URL: ${url}
+Performance: ${pageSpeedData.performance}
+SEO: ${pageSpeedData.seo}
+Mobile: ${pageSpeedData.mobile}
+Accessibility: ${pageSpeedData.accessibility}
+
+Return ONLY valid JSON array with exactly 6 recommendations:
+[
+ { "title":"Recommendation Title", "description":"Detailed description", "priority":"High", "impact":"Expected impact" }
+]
+
+Do not include any markdown formatting or code blocks, just the JSON array.
+`;
+
+        const response = await axios.post(
+            `${apiUrl}?key=${apiKey}`,
+            {
+                contents: [
+                    {
+                        parts: [{ text: prompt }]
+                    }
+                ]
+            },
+            { timeout: 30000 }
         );
 
-        /* ---------- RESPONSE ---------- */
-        return res.status(200).json({
-            url,
-            email,
-            name: name || 'User',
-            timestamp: new Date().toISOString(),
-            overallScore: pageSpeedData.overallScore,
-            performance: pageSpeedData.performance,
-            seo: pageSpeedData.seo,
-            mobile: pageSpeedData.mobile,
-            accessibility: pageSpeedData.accessibility,
-            recommendations: aiRecommendations
-        });
+        const text =
+            response.data.candidates[0].content.parts[0].text;
 
-    } catch (error) {
-        console.error("API ERROR:", error);
-        return res.status(500).json({
-            error: 'Analysis failed',
-            message: error.message
-        });
+        const jsonMatch = text.match(/\[[\s\S]*\]/);
+
+        if (!jsonMatch) {
+            console.error("Invalid AI response - no JSON found:", text);
+            throw new Error("Invalid AI response");
+        }
+
+        const recommendations = JSON.parse(jsonMatch[0]);
+        return recommendations.slice(0, 6);
+
+    } catch (err) {
+        console.error("Gemini error:", err.response?.data || err.message);
+        return getFallbackRecommendations(pageSpeedData);
     }
-};
+}
 
 /* ================= PAGE SPEED ================= */
 
