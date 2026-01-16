@@ -131,34 +131,37 @@ async function getPageSpeedData(url) {
     }
 }
 
-/* ================= GEMINI 1.5 FLASH ================= */
+/* ================= GEMINI PRO (STABLE) ================= */
 
 async function generateAIRecommendations(url, pageSpeedData) {
     try {
         const apiKey = process.env.GEMINI_API_KEY;
 
-        // Using Gemini 1.5 Flash with correct v1beta endpoint
+        // Using stable Gemini Pro model
         const apiUrl =
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
 
         const prompt = `
-Analyze this website and give 6 actionable recommendations.
+You are a website optimization expert. Analyze this website and provide 6 specific, actionable recommendations.
 
-URL: ${url}
-Performance: ${pageSpeedData.performance}
-SEO: ${pageSpeedData.seo}
-Mobile: ${pageSpeedData.mobile}
-Accessibility: ${pageSpeedData.accessibility}
+Website URL: ${url}
+Performance Score: ${pageSpeedData.performance}/100
+SEO Score: ${pageSpeedData.seo}/100
+Mobile Score: ${pageSpeedData.mobile}/100
+Accessibility Score: ${pageSpeedData.accessibility}/100
 
-Return ONLY valid JSON array with exactly 6 recommendations:
+Based on these scores, provide exactly 6 recommendations. Focus on the areas with the lowest scores first.
+
+Return ONLY a valid JSON array with this exact format (no markdown, no code blocks, no extra text):
 [
- { "title":"Recommendation Title", "description":"Detailed description", "priority":"High", "impact":"Expected impact" }
+ { "title":"Brief title", "description":"Specific actionable description", "priority":"High", "impact":"Measurable expected impact" },
+ { "title":"Brief title", "description":"Specific actionable description", "priority":"Medium", "impact":"Measurable expected impact" }
 ]
 
-Do not include any markdown formatting or code blocks, just the JSON array.
+Make sure each recommendation is specific to the scores provided.
 `;
 
-        console.log('Calling Gemini API for recommendations...');
+        console.log('Calling Gemini Pro API for recommendations...');
 
         const response = await axios.post(
             `${apiUrl}?key=${apiKey}`,
@@ -175,13 +178,13 @@ Do not include any markdown formatting or code blocks, just the JSON array.
         const text =
             response.data.candidates[0].content.parts[0].text;
 
-        console.log('Gemini raw response:', text);
+        console.log('Gemini raw response:', text.substring(0, 200) + '...');
 
         // Extract JSON from response (handles cases where AI adds markdown)
         const jsonMatch = text.match(/\[[\s\S]*\]/);
 
         if (!jsonMatch) {
-            console.error("Invalid AI response - no JSON found:", text);
+            console.error("Invalid AI response - no JSON found");
             throw new Error("Invalid AI response");
         }
 
@@ -207,52 +210,69 @@ function getFallbackRecommendations(data) {
     if (data.performance < 70) {
         list.push({
             title: "Optimize Images",
-            description: "Compress images, use WebP format, and implement lazy loading to reduce page load time.",
+            description: "Compress images using tools like TinyPNG, convert to WebP format, and implement lazy loading to reduce initial page load time.",
             priority: "High",
-            impact: "2–5s faster load time"
+            impact: "2-5 seconds faster load time"
+        });
+        list.push({
+            title: "Minify CSS and JavaScript",
+            description: "Remove unnecessary characters, whitespace, and comments from CSS and JavaScript files to reduce file sizes.",
+            priority: "High",
+            impact: "10-30% reduction in file sizes"
         });
     }
 
     if (data.seo < 70) {
         list.push({
-            title: "Fix Meta Tags",
-            description: "Add proper title tags, meta descriptions, and Open Graph tags for better search visibility.",
+            title: "Improve Meta Tags",
+            description: "Add unique, descriptive title tags (50-60 chars) and meta descriptions (150-160 chars) to all pages. Include target keywords naturally.",
             priority: "High",
-            impact: "Better search rankings"
+            impact: "Better search rankings and click-through rates"
+        });
+        list.push({
+            title: "Fix Heading Structure",
+            description: "Ensure proper heading hierarchy (H1 → H2 → H3) on all pages. Use only one H1 per page containing your main keyword.",
+            priority: "Medium",
+            impact: "Improved SEO and accessibility"
         });
     }
 
     if (data.mobile < 70) {
         list.push({
-            title: "Mobile Optimization",
-            description: "Fix responsive layout issues and adjust font sizes for better mobile user experience.",
+            title: "Mobile Responsive Design",
+            description: "Fix responsive layout issues, ensure tap targets are at least 48x48 pixels, and use appropriate font sizes (minimum 16px) for mobile devices.",
             priority: "High",
-            impact: "Better mobile UX"
+            impact: "Better mobile user experience and rankings"
         });
     }
 
     if (data.accessibility < 70) {
         list.push({
             title: "Improve Accessibility",
-            description: "Add alt text to images, improve color contrast, and add ARIA labels for screen readers.",
+            description: "Add descriptive alt text to all images, ensure color contrast ratio is at least 4.5:1, and add ARIA labels to interactive elements.",
             priority: "Medium",
-            impact: "Wider audience reach"
+            impact: "Reach 15% more users and improve SEO"
         });
     }
 
-    list.push({
-        title: "Enable HTTPS",
-        description: "Install SSL certificate to secure your website and improve trust with visitors.",
-        priority: "High",
-        impact: "Trust + SEO boost"
-    });
+    // Always include these if we don't have 6 yet
+    if (list.length < 6) {
+        list.push({
+            title: "Enable Browser Caching",
+            description: "Configure your server to set proper cache headers for static resources (images, CSS, JS) to reduce repeat visitor load times.",
+            priority: "Medium",
+            impact: "50-70% faster for returning visitors"
+        });
+    }
 
-    list.push({
-        title: "Minify CSS and JavaScript",
-        description: "Reduce file sizes by removing unnecessary characters and whitespace from code.",
-        priority: "Medium",
-        impact: "Faster page loads"
-    });
+    if (list.length < 6) {
+        list.push({
+            title: "Install SSL Certificate",
+            description: "Secure your website with HTTPS to protect user data, build trust, and improve search rankings (required by Google).",
+            priority: "High",
+            impact: "Trust + SEO boost + security"
+        });
+    }
 
     return list.slice(0, 6);
 }
