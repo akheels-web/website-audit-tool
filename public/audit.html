@@ -33,8 +33,81 @@
     <footer class="footer">
         <div class="container">
             <p>&copy; 2024 Digital Vint. All rights reserved.</p>
+            <p>
+                <a href="https://digitalvint.com">Main Website</a> • 
+                <a href="mailto:contact@digitalvint.com">Contact</a>
+            </p>
         </div>
     </footer>
+
+    <!-- Consultation Modal -->
+    <div id="consultationModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>📞 Book Your Free Consultation</h2>
+            <p>Let's discuss how we can improve your website's performance and drive more conversions.</p>
+            
+            <form id="consultationForm" class="consultation-form">
+                <div class="form-group">
+                    <label for="consultName">Your Name *</label>
+                    <input type="text" id="consultName" required class="input-field">
+                </div>
+                <div class="form-group">
+                    <label for="consultEmail">Email Address *</label>
+                    <input type="email" id="consultEmail" required class="input-field">
+                </div>
+                <div class="form-group">
+                    <label for="consultPhone">Phone Number</label>
+                    <input type="tel" id="consultPhone" class="input-field">
+                </div>
+                <div class="form-group">
+                    <label for="consultMessage">What challenges are you facing?</label>
+                    <textarea id="consultMessage" rows="4" class="input-field"></textarea>
+                </div>
+                <button type="submit" class="btn-primary btn-large">Schedule Free Consultation</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom Report Modal -->
+    <div id="reportModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>📊 Get Your Custom Detailed Report</h2>
+            <p>Receive a comprehensive PDF report with in-depth analysis and step-by-step action plan.</p>
+            
+            <div class="report-features">
+                <div class="report-feature">
+                    <span class="feature-check">✓</span>
+                    <span>Detailed technical SEO audit</span>
+                </div>
+                <div class="report-feature">
+                    <span class="feature-check">✓</span>
+                    <span>Competitor comparison analysis</span>
+                </div>
+                <div class="report-feature">
+                    <span class="feature-check">✓</span>
+                    <span>Prioritized action roadmap</span>
+                </div>
+                <div class="report-feature">
+                    <span class="feature-check">✓</span>
+                    <span>ROI projections for each fix</span>
+                </div>
+            </div>
+            
+            <form id="reportForm" class="consultation-form">
+                <div class="form-group">
+                    <label for="reportEmail">Email Address *</label>
+                    <input type="email" id="reportEmail" required class="input-field">
+                </div>
+                <div class="form-group">
+                    <label for="reportCompany">Company Name</label>
+                    <input type="text" id="reportCompany" class="input-field">
+                </div>
+                <button type="submit" class="btn-primary btn-large">Get Custom Report (Free)</button>
+            </form>
+        </div>
+    </div>
 
     <script src="script.js"></script>
     <script>
@@ -46,6 +119,7 @@
                 return;
             }
             displayResults(results);
+            initializeModals();
         });
 
         function displayResults(data) {
@@ -55,6 +129,7 @@
                 <div class="results-header">
                     <h1>Your Website Audit Results</h1>
                     <p class="analyzed-url">${data.url}</p>
+                    <p class="analysis-date">Analyzed on ${new Date(data.timestamp).toLocaleDateString()}</p>
                 </div>
 
                 <div class="overall-score">
@@ -66,6 +141,20 @@
                         <h2>${getScoreText(data.overallScore)}</h2>
                         <p>${getScoreMessage(data.overallScore)}</p>
                     </div>
+                </div>
+
+                <!-- Smart CTA Banner (Based on Score) -->
+                <div class="smart-cta-banner ${data.overallScore < 70 ? 'urgent' : 'standard'}">
+                    <div class="cta-banner-content">
+                        ${data.overallScore < 70 ? `
+                            <h3>⚠️ Your Website Needs Immediate Attention</h3>
+                            <p>Your score indicates critical issues affecting your business. Let our experts fix them fast.</p>
+                        ` : `
+                            <h3>🚀 Good Start! Let's Make It Perfect</h3>
+                            <p>Your website is on the right track. We can help you reach peak performance.</p>
+                        `}
+                    </div>
+                    <button onclick="openConsultationModal()" class="btn-primary">Get Expert Help Now</button>
                 </div>
 
                 <div class="metrics-grid">
@@ -120,12 +209,88 @@
                     </div>
                 </div>
 
-                <div class="cta-box">
-                    <h2>Need Help Fixing These Issues?</h2>
-                    <p>Our team at Digital Vint can implement all these recommendations for you.</p>
+                <!-- Lead Conversion CTAs -->
+                <div class="conversion-cta-section">
+                    <h2>Ready to Transform Your Website?</h2>
+                    <p class="cta-subtitle">Choose how you'd like us to help you implement these improvements</p>
+                    
+                    <div class="cta-cards-grid">
+                        <!-- CTA Card 1: Book Consultation -->
+                        <div class="cta-card featured">
+                            <div class="cta-badge">Most Popular</div>
+                            <div class="cta-icon">📞</div>
+                            <h3>Book Free Consultation</h3>
+                            <p>30-minute strategy call with our experts to discuss your specific needs</p>
+                            <ul class="cta-benefits">
+                                <li>✓ Personalized action plan</li>
+                                <li>✓ ROI projection</li>
+                                <li>✓ Timeline & budget estimate</li>
+                            </ul>
+                            <button onclick="openConsultationModal()" class="btn-primary btn-large">
+                                Schedule Free Call
+                            </button>
+                        </div>
+
+                        <!-- CTA Card 2: Fix My Website -->
+                        <div class="cta-card">
+                            <div class="cta-icon">🔧</div>
+                            <h3>Fix My Website</h3>
+                            <p>Let our team implement all recommended fixes for you</p>
+                            <ul class="cta-benefits">
+                                <li>✓ Full implementation</li>
+                                <li>✓ 30-day guarantee</li>
+                                <li>✓ Ongoing support</li>
+                            </ul>
+                            <a href="https://digitalvint.com/services" class="btn-primary btn-large">
+                                Get Quote
+                            </a>
+                        </div>
+
+                        <!-- CTA Card 3: Custom Report -->
+                        <div class="cta-card">
+                            <div class="cta-icon">📊</div>
+                            <h3>Get Custom Report</h3>
+                            <p>Detailed PDF report with competitive analysis and roadmap</p>
+                            <ul class="cta-benefits">
+                                <li>✓ 20+ page analysis</li>
+                                <li>✓ Competitor insights</li>
+                                <li>✓ Step-by-step guide</li>
+                            </ul>
+                            <button onclick="openReportModal()" class="btn-primary btn-large">
+                                Request Report (Free)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trust Section -->
+                <div class="trust-section">
+                    <h3>Trusted by 200+ Businesses</h3>
+                    <div class="trust-stats">
+                        <div class="trust-stat">
+                            <div class="stat-number">95%</div>
+                            <div class="stat-label">Client Satisfaction</div>
+                        </div>
+                        <div class="trust-stat">
+                            <div class="stat-number">2.5x</div>
+                            <div class="stat-label">Avg. Traffic Increase</div>
+                        </div>
+                        <div class="trust-stat">
+                            <div class="stat-number">60%</div>
+                            <div class="stat-label">Faster Load Times</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Final CTA -->
+                <div class="final-cta">
+                    <h2>Don't Let These Issues Cost You Customers</h2>
+                    <p>Every day you wait, your competitors are getting ahead. Let's fix this together.</p>
                     <div class="cta-buttons">
-                        <a href="https://digitalvint.com" class="btn-primary">Get Professional Help</a>
-                        <a href="index.html" class="btn-secondary">Analyze Another Website</a>
+                        <button onclick="openConsultationModal()" class="btn-primary btn-large">
+                            Talk to an Expert
+                        </button>
+                        <a href="index.html" class="btn-secondary btn-large">Analyze Another Site</a>
                     </div>
                 </div>
             `;
@@ -180,6 +345,83 @@
             
             const level = score >= 70 ? 'high' : score >= 50 ? 'medium' : 'low';
             return messages[metric][level];
+        }
+
+        // Modal Functions
+        function initializeModals() {
+            const modals = document.querySelectorAll('.modal');
+            const closeButtons = document.querySelectorAll('.modal-close');
+            
+            closeButtons.forEach(btn => {
+                btn.onclick = function() {
+                    this.closest('.modal').style.display = 'none';
+                }
+            });
+            
+            window.onclick = function(event) {
+                if (event.target.classList.contains('modal')) {
+                    event.target.style.display = 'none';
+                }
+            }
+
+            // Form submissions
+            document.getElementById('consultationForm').addEventListener('submit', handleConsultationSubmit);
+            document.getElementById('reportForm').addEventListener('submit', handleReportSubmit);
+        }
+
+        function openConsultationModal() {
+            const results = JSON.parse(localStorage.getItem('auditResults'));
+            document.getElementById('consultEmail').value = results.email || '';
+            document.getElementById('consultName').value = results.name || '';
+            document.getElementById('consultationModal').style.display = 'flex';
+        }
+
+        function openReportModal() {
+            const results = JSON.parse(localStorage.getItem('auditResults'));
+            document.getElementById('reportEmail').value = results.email || '';
+            document.getElementById('reportModal').style.display = 'flex';
+        }
+
+        async function handleConsultationSubmit(e) {
+            e.preventDefault();
+            
+            const formData = {
+                type: 'consultation',
+                name: document.getElementById('consultName').value,
+                email: document.getElementById('consultEmail').value,
+                phone: document.getElementById('consultPhone').value,
+                message: document.getElementById('consultMessage').value,
+                auditResults: JSON.parse(localStorage.getItem('auditResults'))
+            };
+
+            // TODO: Send to your backend/CRM
+            console.log('Consultation request:', formData);
+            
+            alert('Thank you! We\'ll contact you within 24 hours to schedule your free consultation.');
+            document.getElementById('consultationModal').style.display = 'none';
+            
+            // You can integrate with your CRM here
+            // await fetch('/api/lead-capture', { method: 'POST', body: JSON.stringify(formData) });
+        }
+
+        async function handleReportSubmit(e) {
+            e.preventDefault();
+            
+            const formData = {
+                type: 'report',
+                email: document.getElementById('reportEmail').value,
+                company: document.getElementById('reportCompany').value,
+                auditResults: JSON.parse(localStorage.getItem('auditResults'))
+            };
+
+            // TODO: Send to your backend
+            console.log('Report request:', formData);
+            
+            alert('Great! We\'re generating your custom report. You\'ll receive it via email within 2 hours.');
+            document.getElementById('reportModal').style.display = 'none';
+            
+            // You can integrate with your email service here
+            // await fetch('/api/generate-report', { method: 'POST', body: JSON.stringify(formData) });
         }
     </script>
 </body>
