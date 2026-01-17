@@ -401,18 +401,23 @@
 
             try {
                 // Save to database via API
+                console.log('Submitting consultation request...');
                 const response = await fetch('/api/lead-capture', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)
                 });
 
+                console.log('Response status:', response.status);
+                
+                const result = await response.json();
+                console.log('Response data:', result);
+
                 if (!response.ok) {
-                    throw new Error('Failed to submit');
+                    throw new Error(result.message || result.error || 'Failed to submit');
                 }
 
-                const result = await response.json();
-                console.log('Lead captured:', result);
+                console.log('Lead captured successfully:', result);
 
                 // Send email via EmailJS
                 await sendEmailNotification(formData, 'consultation');
@@ -423,7 +428,7 @@
 
             } catch (error) {
                 console.error('Submission error:', error);
-                alert('Something went wrong. Please try again or email us directly at contact@digitalvint.com');
+                alert(`Submission failed: ${error.message}\n\nPlease try again or email us directly at contact@digitalvint.com`);
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = originalText;
