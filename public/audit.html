@@ -385,6 +385,11 @@
         async function handleConsultationSubmit(e) {
             e.preventDefault();
             
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
             const formData = {
                 type: 'consultation',
                 name: document.getElementById('consultName').value,
@@ -394,34 +399,130 @@
                 auditResults: JSON.parse(localStorage.getItem('auditResults'))
             };
 
-            // TODO: Send to your backend/CRM
-            console.log('Consultation request:', formData);
-            
-            alert('Thank you! We\'ll contact you within 24 hours to schedule your free consultation.');
-            document.getElementById('consultationModal').style.display = 'none';
-            
-            // You can integrate with your CRM here
-            // await fetch('/api/lead-capture', { method: 'POST', body: JSON.stringify(formData) });
+            try {
+                // Save to database via API
+                const response = await fetch('/api/lead-capture', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to submit');
+                }
+
+                const result = await response.json();
+                console.log('Lead captured:', result);
+
+                // Send email via EmailJS
+                await sendEmailNotification(formData, 'consultation');
+
+                alert('Thank you! We\'ll contact you within 24 hours to schedule your free consultation.');
+                document.getElementById('consultationModal').style.display = 'none';
+                e.target.reset();
+
+            } catch (error) {
+                console.error('Submission error:', error);
+                alert('Something went wrong. Please try again or email us directly at contact@digitalvint.com');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
         }
 
         async function handleReportSubmit(e) {
             e.preventDefault();
             
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
             const formData = {
                 type: 'report',
+                name: document.getElementById('reportEmail').value.split('@')[0],
                 email: document.getElementById('reportEmail').value,
                 company: document.getElementById('reportCompany').value,
                 auditResults: JSON.parse(localStorage.getItem('auditResults'))
             };
 
-            // TODO: Send to your backend
-            console.log('Report request:', formData);
-            
-            alert('Great! We\'re generating your custom report. You\'ll receive it via email within 2 hours.');
-            document.getElementById('reportModal').style.display = 'none';
-            
-            // You can integrate with your email service here
-            // await fetch('/api/generate-report', { method: 'POST', body: JSON.stringify(formData) });
+            try {
+                // Save to database via API
+                const response = await fetch('/api/lead-capture', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to submit');
+                }
+
+                const result = await response.json();
+                console.log('Lead captured:', result);
+
+                // Send email via EmailJS
+                await sendEmailNotification(formData, 'report');
+
+                alert('Great! We\'re generating your custom report. You\'ll receive it via email within 2 hours.');
+                document.getElementById('reportModal').style.display = 'none';
+                e.target.reset();
+
+            } catch (error) {
+                console.error('Submission error:', error);
+                alert('Something went wrong. Please try again or email us directly at contact@digitalvint.com');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        }
+
+        // EmailJS Integration
+        async function sendEmailNotification(formData, type) {
+            // EmailJS configuration
+            const EMAILJS_SERVICE_ID = 'YOUR_EMAILJS_SERVICE_ID';
+            const EMAILJS_TEMPLATE_ID = type === 'consultation' ? 'YOUR_CONSULTATION_TEMPLATE_ID' : 'YOUR_REPORT_TEMPLATE_ID';
+            const EMAILJS_PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';
+
+            // Skip if not configured
+            if (EMAILJS_SERVICE_ID === 'YOUR_EMAILJS_SERVICE_ID') {
+                console.log('EmailJS not configured, skipping email');
+                return;
+            }
+
+            const templateParams = {
+                to_email: formData.email,
+                to_name: formData.name || 'there',
+                from_name: 'Digital Vint',
+                type: type,
+                website_url: formData.auditResults?.url || 'N/A',
+                audit_score: formData.auditResults?.overallScore || 'N/A',
+                message: formData.message || '',
+                phone: formData.phone || 'Not provided',
+                company: formData.company || 'Not provided'
+            };
+
+            try {
+                const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        service_id: EMAILJS_SERVICE_ID,
+                        template_id: EMAILJS_TEMPLATE_ID,
+                        user_id: EMAILJS_PUBLIC_KEY,
+                        template_params: templateParams
+                    })
+                });
+
+                if (response.ok) {
+                    console.log('Email sent successfully via EmailJS');
+                } else {
+                    console.error('EmailJS error:', await response.text());
+                }
+            } catch (error) {
+                console.error('EmailJS failed:', error);
+                // Don't throw - email is not critical for form submission
+            }
         }
     </script>
 </body>
