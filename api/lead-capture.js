@@ -112,25 +112,27 @@ async function syncToZoho(lead) {
         return;
     }
 
+    // Format data for Zapier webhook
     const zohoData = {
-        Lead_Source: 'Website Audit Tool',
-        First_Name: lead.name?.split(' ')[0] || '',
-        Last_Name: lead.name?.split(' ').slice(1).join(' ') || 'Unknown',
-        Email: lead.email,
-        Phone: lead.phone || '',
-        Company: lead.company || lead.website_url || '',
-        Description: lead.message || '',
-        Website: lead.website_url || '',
-        Lead_Status: 'New',
-        // Custom fields
-        Audit_Score: lead.audit_score,
-        Audit_Type: lead.type,
-        Performance_Score: lead.audit_data?.performance,
-        SEO_Score: lead.audit_data?.seo,
-        Mobile_Score: lead.audit_data?.mobile
+        first_name: lead.name?.split(' ')[0] || 'Unknown',
+        last_name: lead.name?.split(' ').slice(1).join(' ') || 'User',
+        email: lead.email,
+        phone: lead.phone || '',
+        company: lead.company || lead.website_url || 'Not Provided',
+        description: lead.message || `${lead.type} request from website audit tool`,
+        website: lead.website_url || '',
+        lead_source: 'Website Audit Tool',
+        lead_status: 'New',
+        // Additional fields as plain text in description
+        audit_details: `Audit Score: ${lead.audit_score || 'N/A'}/100
+Type: ${lead.type}
+Performance: ${lead.audit_data?.performance || 'N/A'}
+SEO: ${lead.audit_data?.seo || 'N/A'}
+Mobile: ${lead.audit_data?.mobile || 'N/A'}
+Accessibility: ${lead.audit_data?.accessibility || 'N/A'}`
     };
 
-    console.log('Syncing to Zoho CRM...');
+    console.log('Syncing to Zoho CRM via Zapier...', { email: zohoData.email });
 
     const response = await axios.post(webhookUrl, zohoData, {
         headers: { 'Content-Type': 'application/json' },
