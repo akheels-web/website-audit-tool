@@ -120,7 +120,40 @@
             }
             displayResults(results);
             initializeModals();
+            
+            // Capture initial audit as a lead (send to backend)
+            captureAuditLead(results);
         });
+
+        // Capture the initial audit as a lead
+        async function captureAuditLead(results) {
+            try {
+                console.log('Capturing initial audit lead...');
+                
+                const leadData = {
+                    type: 'audit_completed',
+                    name: results.name || 'Website Owner',
+                    email: results.email,
+                    auditResults: results
+                };
+
+                // Send to backend
+                const response = await fetch('/api/lead-capture', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(leadData)
+                });
+
+                if (response.ok) {
+                    console.log('Initial audit lead captured successfully');
+                } else {
+                    console.log('Could not capture initial lead (non-critical)');
+                }
+            } catch (error) {
+                console.error('Lead capture error (non-critical):', error);
+                // Don't show error to user - this is background process
+            }
+        }
 
         function displayResults(data) {
             const container = document.getElementById('resultsContainer');
@@ -485,7 +518,7 @@
         // Trigger Make.com webhook directly (backup method)
         async function triggerMakeWebhook(formData) {
             // Make.com webhook URL - configure this if you want direct frontend trigger
-            const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/cthsxfq2gjn9sv63jwuxtyflnimauqgj'; // Leave empty to use backend only
+            const MAKE_WEBHOOK_URL = ''; // Leave empty to use backend only
             
             if (!MAKE_WEBHOOK_URL) {
                 console.log('Make.com direct webhook not configured, using backend only');
