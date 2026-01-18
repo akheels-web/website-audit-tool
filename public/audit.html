@@ -482,15 +482,60 @@
             }
         }
 
+        // Trigger Make.com webhook directly (backup method)
+        async function triggerMakeWebhook(formData) {
+            // Make.com webhook URL - configure this if you want direct frontend trigger
+            const MAKE_WEBHOOK_URL = ''; // Leave empty to use backend only
+            
+            if (!MAKE_WEBHOOK_URL) {
+                console.log('Make.com direct webhook not configured, using backend only');
+                return;
+            }
+
+            try {
+                const nameParts = (formData.name || 'Website User').trim().split(' ');
+                const firstName = nameParts[0] || 'Website';
+                const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : 'Lead';
+
+                const makeData = {
+                    first_name: firstName,
+                    last_name: lastName,
+                    email: formData.email,
+                    phone: formData.phone || '',
+                    company: formData.company || formData.auditResults?.url || 'Not Provided',
+                    website: formData.auditResults?.url || '',
+                    description: formData.message || `${formData.type} request from website audit tool`,
+                    lead_source: 'Web Download',
+                    lead_status: 'Attempted to Contact',
+                    audit_details: `Audit Score: ${formData.auditResults?.overallScore || 'N/A'}/100
+Type: ${formData.type}
+Performance: ${formData.auditResults?.performance || 'N/A'}
+SEO: ${formData.auditResults?.seo || 'N/A'}
+Mobile: ${formData.auditResults?.mobile || 'N/A'}
+Accessibility: ${formData.auditResults?.accessibility || 'N/A'}`
+                };
+
+                await fetch(MAKE_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(makeData)
+                });
+
+                console.log('Make.com webhook triggered successfully');
+            } catch (error) {
+                console.error('Make.com webhook failed (non-critical):', error);
+            }
+        }
+
         // EmailJS Integration
         async function sendEmailNotification(formData, type) {
             // EmailJS configuration
-            const EMAILJS_SERVICE_ID = 'service_ilsc3fs';
-            const EMAILJS_TEMPLATE_ID = type === 'consultation' ? 'template_s8sjtat' : 'template_q487fnh';
-            const EMAILJS_PUBLIC_KEY = 'Sb4pCt7LOQI8Yde6z';
+            const EMAILJS_SERVICE_ID = 'YOUR_EMAILJS_SERVICE_ID';
+            const EMAILJS_TEMPLATE_ID = type === 'consultation' ? 'YOUR_CONSULTATION_TEMPLATE_ID' : 'YOUR_REPORT_TEMPLATE_ID';
+            const EMAILJS_PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';
 
             // Skip if not configured
-            if (EMAILJS_SERVICE_ID === 'service_ilsc3fs') {
+            if (EMAILJS_SERVICE_ID === 'YOUR_EMAILJS_SERVICE_ID') {
                 console.log('EmailJS not configured, skipping email');
                 return;
             }
