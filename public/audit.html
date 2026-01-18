@@ -134,6 +134,9 @@
                     type: 'audit_completed',
                     name: results.name || 'Website Owner',
                     email: results.email,
+                    company: 'Website Visitor', // Default company
+                    phone: '', // Empty phone
+                    message: `Completed website audit for ${results.url}`,
                     auditResults: results
                 };
 
