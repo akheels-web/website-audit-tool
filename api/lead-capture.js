@@ -112,31 +112,37 @@ async function syncToZoho(lead) {
         return;
     }
 
-    // Format data for Zapier webhook with proper name handling
+    // Format data for Make.com webhook with proper name handling
     const nameParts = (lead.name || 'Website User').trim().split(' ');
     const firstName = nameParts[0] || 'Website';
-    const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : 'User';
+    const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : 'Lead';
     
+    // Ensure all fields have values (Make.com requires non-empty strings)
     const zohoData = {
         first_name: firstName,
         last_name: lastName,
-        email: lead.email,
-        phone: lead.phone || '',
-        company: lead.company || lead.website_url || 'Not Provided',
-        description: lead.message || `${lead.type} request from website audit tool`,
-        website: lead.website_url || '',
+        email: lead.email || 'no-email@digitalvint.com',
+        phone: lead.phone || 'Not Provided',
+        company: lead.company || lead.website_url || 'Website Visitor',
+        description: lead.message || `${lead.type || 'audit'} request from website audit tool`,
+        website: lead.website_url || 'Not Provided',
         lead_source: 'Web Download',
         lead_status: 'Attempted to Contact',
         // Additional fields as plain text in description
         audit_details: `Audit Score: ${lead.audit_score || 'N/A'}/100
-Type: ${lead.type}
+Type: ${lead.type || 'N/A'}
 Performance: ${lead.audit_data?.performance || 'N/A'}
 SEO: ${lead.audit_data?.seo || 'N/A'}
 Mobile: ${lead.audit_data?.mobile || 'N/A'}
 Accessibility: ${lead.audit_data?.accessibility || 'N/A'}`
     };
 
-    console.log('Syncing to Zoho CRM via Make.com...', { email: zohoData.email });
+    console.log('Syncing to Zoho CRM via Make.com...', { 
+        email: zohoData.email,
+        firstName: zohoData.first_name,
+        lastName: zohoData.last_name,
+        company: zohoData.company
+    });
 
     const response = await axios.post(webhookUrl, zohoData, {
         headers: { 'Content-Type': 'application/json' },
