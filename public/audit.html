@@ -517,11 +517,12 @@
 
         // Trigger Make.com webhook directly (backup method)
         async function triggerMakeWebhook(formData) {
-            // Make.com webhook URL - configure this if you want direct frontend trigger
-            const MAKE_WEBHOOK_URL = ''; // Leave empty to use backend only
+            // IMPORTANT: Leave this EMPTY to avoid CORS issues
+            // Make.com will be called from backend instead
+            const MAKE_WEBHOOK_URL = ''; 
             
             if (!MAKE_WEBHOOK_URL) {
-                console.log('Make.com direct webhook not configured, using backend only');
+                console.log('Using backend for Make.com webhook (recommended)');
                 return;
             }
 
