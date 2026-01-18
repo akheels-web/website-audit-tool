@@ -1,7 +1,5 @@
 const axios = require('axios');
 
-// Updated: 2026-01-17 - Using Gemini 2.5 Flash
-
 module.exports = async (req, res) => {
 
     /* ---------- CORS ---------- */
@@ -83,7 +81,9 @@ async function getPageSpeedData(url) {
 
         console.log('Calling PageSpeed API for:', url);
         
-        const response = await axios.get(apiUrl, { timeout: 60000 });
+        const response = await axios.get(apiUrl, { 
+            timeout: 45000 // Reduced from 60s to 45s for Vercel limits
+        });
 
         const categories =
             response.data.lighthouseResult.categories;
