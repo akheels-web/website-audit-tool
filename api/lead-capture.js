@@ -112,17 +112,21 @@ async function syncToZoho(lead) {
         return;
     }
 
-    // Format data for Zapier webhook
+    // Format data for Zapier webhook with proper name handling
+    const nameParts = (lead.name || 'Website User').trim().split(' ');
+    const firstName = nameParts[0] || 'Website';
+    const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : 'User';
+    
     const zohoData = {
-        first_name: lead.name?.split(' ')[0] || 'Unknown',
-        last_name: lead.name?.split(' ').slice(1).join(' ') || 'User',
+        first_name: firstName,
+        last_name: lastName,
         email: lead.email,
         phone: lead.phone || '',
         company: lead.company || lead.website_url || 'Not Provided',
         description: lead.message || `${lead.type} request from website audit tool`,
         website: lead.website_url || '',
-        lead_source: 'Website Audit Tool',
-        lead_status: 'New',
+        lead_source: 'Web Download',
+        lead_status: 'Attempted to Contact',
         // Additional fields as plain text in description
         audit_details: `Audit Score: ${lead.audit_score || 'N/A'}/100
 Type: ${lead.type}
@@ -132,14 +136,14 @@ Mobile: ${lead.audit_data?.mobile || 'N/A'}
 Accessibility: ${lead.audit_data?.accessibility || 'N/A'}`
     };
 
-    console.log('Syncing to Zoho CRM via Zapier...', { email: zohoData.email });
+    console.log('Syncing to Zoho CRM via Make.com...', { email: zohoData.email });
 
     const response = await axios.post(webhookUrl, zohoData, {
         headers: { 'Content-Type': 'application/json' },
-        timeout: 10000
+        timeout: 20000 // Increased to 20 seconds
     });
 
-    console.log('Zoho sync successful');
+    console.log('Zoho sync successful via Make.com');
     return response.data;
 }
 
